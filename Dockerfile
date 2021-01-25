@@ -18,8 +18,8 @@ RUN cd quiche/deps/boringssl && \
     make && \
     cd .. && \
     mkdir -p .openssl/lib && \
-    cp build/crypto/libcrypto.a build/ssl/libssl.a .openssl/lib && \
-    ln -s $PWD/include .openssl
+    cp build/libcrypto.a build/libssl.a .openssl/lib && \ 
+    ln -s /opt/quiche/deps/boringssl/src/include .openssl
 
 # install rust & cargo
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y -q;
@@ -33,7 +33,7 @@ RUN export PATH="$HOME/.cargo/bin:$PATH" && \
 #adding curl
 RUN git clone https://github.com/curl/curl && \
     cd curl && \
-    ./buildconf && \
+    autoreconf -fi && \
     ./configure LDFLAGS="-Wl,-rpath,/opt/quiche/target/release" --with-ssl=/opt/quiche/deps/boringssl/.openssl --with-quiche=/opt/quiche/target/release --enable-alt-svc && \
     make && \
     make DESTDIR="/ubuntu/" install
